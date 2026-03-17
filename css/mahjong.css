@@ -159,7 +159,7 @@ body {
   align-items: center;
   justify-content: center;
   background: rgba(253, 246, 255, 0.88);
-  z-index: 100;
+  z-index: 1000;
 }
 
 .message-box {

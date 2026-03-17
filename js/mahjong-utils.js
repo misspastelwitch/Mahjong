@@ -27,7 +27,7 @@ const SUITS = [
   {
     id: 'flowers',
     label: 'HUA',
-    faces: ['梅','蘭','菊','BAM'],
+    faces: ['梅','蘭','菊','0'],
   },
   {
     id: 'seasons',
