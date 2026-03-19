@@ -128,7 +128,7 @@ const App = {
   setup() {
     const game = useMahjong()
 
-    // Reactive board dimensions — recompute when window resizes
+    // Reactive board dimensions
     const bw = ref(boardWidth())
     const bh = ref(boardHeight())
 

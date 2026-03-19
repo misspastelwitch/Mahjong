@@ -131,20 +131,20 @@ function hasMovesRemaining(tiles) {
   return findHintPair(tiles) !== null
 }
 
-// ── Responsive tile sizing ──────────────────────────────────────────────────
+// Tile sizes
 
 const BOARD_COLS  = 15
 const BOARD_ROWS  = 8
 const MAX_LAYERS  = 4
 
-// Desktop tile size and spacing
+// Tile sizes for desktop
 const BASE_W      = 56
 const BASE_H      = 72
 const BASE_GAP_X  = 60
 const BASE_GAP_Y  = 76
 const BASE_OFFSET = 5
 
-// Small-screen tile size (iPad mini and below, ≤768px)
+// tile sizes for mobile
 const SMALL_W      = 40
 const SMALL_H      = 52
 const SMALL_OFFSET = 4
@@ -156,23 +156,22 @@ let OFFSET = BASE_OFFSET
 
 function computeScale() {
   const vw = window.innerWidth
-  // On narrow viewports, collapse gap to just the tile size (no spacing)
+
   const isSmall = vw < 660
   GAP_X  = isSmall ? BASE_W  : BASE_GAP_X
   GAP_Y  = isSmall ? BASE_H  : BASE_GAP_Y
   OFFSET = isSmall ? 3       : BASE_OFFSET
 
-  // Scale so the tile group (excluding padding) fills 75% of the viewport
   TILE_SCALE = (vw * 0.75) / (BOARD_COLS * GAP_X)
 
   const tileW = BASE_GAP_X * TILE_SCALE
   const tileH = BASE_GAP_Y * TILE_SCALE
 
   const root = document.documentElement
-  root.style.setProperty('--tile-w',         tileW.toFixed(2) + 'px')
-  root.style.setProperty('--tile-h',         tileH.toFixed(2) + 'px')
-  root.style.setProperty('--tile-face-size',  rem(tileW * 0.044))
-  root.style.setProperty('--tile-suit-size',  rem(tileW * 0.0106))
+  root.style.setProperty('--tile-w', tileW.toFixed(2) + 'px')
+  root.style.setProperty('--tile-h', tileH.toFixed(2) + 'px')
+  root.style.setProperty('--tile-face-size', rem(tileW * 0.044))
+  root.style.setProperty('--tile-suit-size', rem(tileW * 0.0106))
 }
 
 function rem(n) { return n.toFixed(3) + 'rem' }
