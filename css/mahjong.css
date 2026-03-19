@@ -2,6 +2,10 @@
 
 body {
   font-family: 'Nunito', 'Segoe UI', sans-serif;
+  font-family: 'Lora', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  margin: 0 auto;
 }
 
 /* layout */
@@ -118,10 +122,7 @@ body {
 
 .tile-face {
   font-family: "Noto Sans TC", "Microsoft YaHei", sans-serif;
-  font-size: 1.1rem;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.5px;
+  font-size: 2.5rem;
 }
 
 .tile-suit {
@@ -130,6 +131,7 @@ body {
   font-weight: 700;
   opacity: 0.6;
   line-height: 1;
+  margin-bottom: 5px
 }
 
 /* Tile colours by suit */
