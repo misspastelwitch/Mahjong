@@ -45,8 +45,6 @@ function getFace(suit, val) {
   return s.faces[val % s.faces.length]
 }
 
-// suit names are on tiles
-
 function getLabel(suit) {
   return getSuit(suit).label
 }
@@ -133,13 +131,72 @@ function hasMovesRemaining(tiles) {
   return findHintPair(tiles) !== null
 }
 
-// Tile dimensions
-const TILE_W       = 56
-const TILE_H       = 72
-const GAP_X        = 60
-const GAP_Y        = 76
-const LAYER_OFFSET = 5
+// ── Responsive tile sizing ──────────────────────────────────────────────────
 
-function tileX(col, layer) { return 24 + col * GAP_X + layer * LAYER_OFFSET }
-function tileY(row, layer) { return 12 + row * (TILE_H + 4) + layer * LAYER_OFFSET }
-function tileZIndex(tile)  { return tile.layer * 200 + tile.row * 2 + (tile.selected ? 9999 : 0) }
+const BOARD_COLS  = 15
+const BOARD_ROWS  = 8
+const MAX_LAYERS  = 4
+
+// Desktop tile size and spacing
+const BASE_W      = 56
+const BASE_H      = 72
+const BASE_GAP_X  = 60
+const BASE_GAP_Y  = 76
+const BASE_OFFSET = 5
+
+// Small-screen tile size (iPad mini and below, ≤768px)
+const SMALL_W      = 40
+const SMALL_H      = 52
+const SMALL_OFFSET = 4
+
+let TILE_SCALE = 1
+let GAP_X = BASE_GAP_X
+let GAP_Y = BASE_GAP_Y
+let OFFSET = BASE_OFFSET
+
+function computeScale() {
+  const vw = window.innerWidth
+  // On narrow viewports, collapse gap to just the tile size (no spacing)
+  const isSmall = vw < 660
+  GAP_X  = isSmall ? BASE_W  : BASE_GAP_X
+  GAP_Y  = isSmall ? BASE_H  : BASE_GAP_Y
+  OFFSET = isSmall ? 3       : BASE_OFFSET
+
+  // Scale so the tile group (excluding padding) fills 75% of the viewport
+  TILE_SCALE = (vw * 0.75) / (BOARD_COLS * GAP_X)
+
+  const tileW = BASE_GAP_X * TILE_SCALE
+  const tileH = BASE_GAP_Y * TILE_SCALE
+
+  const root = document.documentElement
+  root.style.setProperty('--tile-w',         tileW.toFixed(2) + 'px')
+  root.style.setProperty('--tile-h',         tileH.toFixed(2) + 'px')
+  root.style.setProperty('--tile-face-size',  rem(tileW * 0.044))
+  root.style.setProperty('--tile-suit-size',  rem(tileW * 0.0106))
+}
+
+function rem(n) { return n.toFixed(3) + 'rem' }
+
+function boardWidth() {
+  return 24 + BOARD_COLS * GAP_X * TILE_SCALE
+       + MAX_LAYERS * OFFSET * TILE_SCALE
+}
+function boardHeight() {
+  return 12 + BOARD_ROWS * GAP_Y * TILE_SCALE
+       + MAX_LAYERS * OFFSET * TILE_SCALE + 20
+}
+
+function tileX(col, layer) {
+  const tileGroupW = BOARD_COLS * GAP_X * TILE_SCALE
+  const centerOffset = (boardWidth() - tileGroupW) / 2
+  return centerOffset + (col * GAP_X + layer * OFFSET) * TILE_SCALE
+}
+function tileY(row, layer) {
+  return (12 + row * GAP_Y + layer * OFFSET) * TILE_SCALE
+}
+function tileZIndex(tile) {
+  return tile.layer * 200 + tile.row * 2 + (tile.selected ? 9999 : 0)
+}
+
+computeScale()
+window.addEventListener('resize', computeScale)

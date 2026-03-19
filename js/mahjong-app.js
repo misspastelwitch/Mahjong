@@ -1,6 +1,6 @@
 // Requires: Vue (global), mahjong-utils.js, mahjong-composable.js
 
-const { createApp, onMounted } = Vue
+const { createApp, onMounted, onUnmounted, ref, computed } = Vue
 
 // tiles
 const MahjongTile = {
@@ -37,11 +37,13 @@ const MahjongTile = {
   `,
 }
 
-// board 
+// board
 const MahjongBoard = {
   props: {
-    tiles:   { type: Array, required: true },
-    hintIds: { type: Array, default: () => [] },
+    tiles:       { type: Array,  required: true },
+    hintIds:     { type: Array,  default: () => [] },
+    boardWidth:  { type: Number, required: true },
+    boardHeight: { type: Number, required: true },
   },
   emits: ['tileClick'],
   components: { MahjongTile },
@@ -50,7 +52,8 @@ const MahjongBoard = {
     return { sorted }
   },
   template: `
-    <div class="board-wrap">
+    <div
+      class="board-wrap">
       <MahjongTile
         v-for="tile in sorted()"
         :key="tile.id"
@@ -59,8 +62,7 @@ const MahjongBoard = {
         :is-hinted="hintIds.includes(tile.id)"
         @click="$emit('tileClick', $event)"
       />
-    </div>
-  `,
+    </div>`,
 }
 
 // Toolbar
@@ -121,38 +123,56 @@ const MahjongMessage = {
 }
 
 // app
-
 const App = {
   components: { MahjongBoard, MahjongToolbar, MahjongStats, MahjongMessage },
   setup() {
     const game = useMahjong()
-    onMounted(() => game.newGame())
-    return game
+
+    // Reactive board dimensions — recompute when window resizes
+    const bw = ref(boardWidth())
+    const bh = ref(boardHeight())
+
+    function onResize() {
+      computeScale()
+      bw.value = boardWidth()
+      bh.value = boardHeight()
+    }
+
+    onMounted(() => {
+      game.newGame()
+      window.addEventListener('resize', onResize)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', onResize)
+    })
+
+    return { ...game, bw, bh }
   },
   template: `
     <div class="mahjong-page">
       <h1 class="page-title">✿ Cute Mahjong ✿</h1>
       <p class="page-subtitle">match pairs of free tiles to clear the board!</p>
-      <p class="page-subtitle">made by</p><a class="page-subtitle" href="https://github.com/misspastelwitch/Mahjong" target="_blank">misspastelwitch</a>
+      <p class="page-subtitle">made by</p>
+      <a class="page-subtitle" href="https://github.com/misspastelwitch/Mahjong" target="_blank">misspastelwitch</a>
       <MahjongToolbar
         :can-undo="canUndo"
         @new-game="newGame"
         @hint="showHint"
         @undo="undoMove"
       />
-
       <MahjongStats
         :remaining="remaining"
         :moves="moves"
         :pairs="pairs"
       />
-
       <MahjongBoard
         :tiles="tiles"
         :hint-ids="hintIds"
+        :board-width="bw"
+        :board-height="bh"
         @tile-click="clickTile"
       />
-
       <MahjongMessage
         :status="status"
         @new-game="newGame"

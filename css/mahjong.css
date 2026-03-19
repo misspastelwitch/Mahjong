@@ -76,8 +76,7 @@ body {
 /* Board */
 .board-wrap {
   position: relative;
-  width: 48rem;
-  height: 40rem;
+  width: 70vw;
   background: #ede0f8;
   border-radius: 22px;
   overflow: visible;
@@ -86,9 +85,9 @@ body {
 /* Tiles */
 .tile {
   position: absolute;
-  width: 56px;
-  height: 72px;
-  border-radius: 10px;
+  width: var(--tile-w, 56px);
+  height: var(--tile-h, 72px);
+  border-radius: calc(var(--tile-w, 56px) * 0.18);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -122,17 +121,19 @@ body {
 
 .tile-face {
   font-family: "Noto Sans TC", "Microsoft YaHei", sans-serif;
-  font-size: 2.5rem;
+  font-size: var(--tile-face-size, 2.5rem);
 }
 
 .tile-suit {
   font-family: "Noto Sans TC", "Microsoft YaHei", sans-serif;
-  font-size: 0.6rem;
+  font-size: var(--tile-suit-size, 0.6rem);
   font-weight: 700;
   opacity: 0.6;
   line-height: 1;
-  margin-bottom: 5px
+  margin-bottom: 5px;
 }
+
+
 
 /* Tile colours by suit */
 
